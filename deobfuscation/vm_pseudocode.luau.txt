@@ -1,0 +1,178 @@
+-- Structured pseudocode reconstruction of the main Luraph VM dispatcher.
+-- This is NOT claimed to be the original source.
+-- Derived statically from loadervodo.luau.txt; payloads are not executed.
+
+function runVM(T, u, S, p, q, b, k, v, J, n, ...)
+    local V = initialInstructionIndex
+    local L, g, W, K, F
+
+    while true do
+        V = V + 1
+        local opcode = o[V]
+
+        -- Arithmetic / comparison families
+        if opcode == 7 then
+            T[p[V]] = T[q[V]] / k[V]
+        elseif opcode == 15 then
+            T[p[V]] = T[q[V]] % k[V]
+        elseif opcode == 35 then
+            T[b[V]] = T[p[V]] - v[V]
+        elseif opcode == 47 then
+            T[p[V]] = S[q[V]][k[V]]
+        elseif opcode == 49 then
+            -- prepares a call context and captured argument descriptors
+            prepareCallContext(...)
+        elseif opcode == 51 then
+            T[p[V]] = T[b[V]] // v[V]
+        elseif opcode == 53 then
+            T[b[V]] = T[p[V]] - v[V]
+        elseif opcode == 61 then
+            L = b[V]
+            g = Instance
+        elseif opcode == 65 then
+            T[p[V]] = p
+        elseif opcode == 75 then
+            g = nil
+        elseif opcode == 79 then
+            T[q[V]][J[V]] = k[V]
+        elseif opcode == 81 then
+            T[p[V]] = Enum
+        elseif opcode == 91 then
+            callWithTwoArguments(T, D)
+        elseif opcode == 93 then
+            T[b[V]] = t
+        elseif opcode == 95 then
+            g = g[W]
+            W = T
+            F = q[V]
+        elseif opcode == 99 then
+            T[b[V]] = (T[q[V]] ~= J[V])
+        elseif opcode == 101 then
+            T[p[V]] = {}
+        elseif opcode == 103 then
+            callWithOneArgument(T, D)
+        elseif opcode == 107 then
+            return false, D, D + p[V] - 2
+
+        -- Roblox / executor globals
+        elseif opcode == 111 then
+            T[p[V]] = request
+        elseif opcode == 112 then
+            T[p[V]] = CFrame
+        elseif opcode == 115 then
+            L = p[V]
+            g = {}
+            u[L] = g
+        elseif opcode == 117 then
+            W = b[V]
+        elseif opcode == 121 then
+            g = g[W]
+            g = #g
+        elseif opcode == 123 then
+            for i = 1, q[V] do
+                T[i] = n[i]
+            end
+        elseif opcode == 125 then
+            T[p[V]] = T[b[V]] .. v[V]
+        elseif opcode == 127 then
+            T[p[V]] = b
+        elseif opcode == 130 then
+            u = u[L]
+        elseif opcode == 132 then
+            T[q[V]] = Color3
+        elseif opcode == 136 then
+            clearCallRegisters()
+        elseif opcode == 139 then
+            T[b[V]] = Vector3
+        elseif opcode == 146 then
+            T[b[V]] = Vector2
+        elseif opcode == 152 then
+            -- call/copy operation; exact stack bookkeeping depends on VM state
+            executeCallTransfer(...)
+        elseif opcode == 158 then
+            T[p[V]] = isfile
+        elseif opcode == 160 then
+            T[q[V]] = D.Oa
+        elseif opcode == 164 then
+            T[p[V]] = T[b[V]] % T[q[V]]
+        elseif opcode == 166 then
+            T[q[V]] = next
+        elseif opcode == 170 then
+            T[q[V]] = T[b[V]] * T[p[V]]
+        elseif opcode == 182 then
+            T[p[V]] = T[b[V]][T[q[V]]]
+        elseif opcode == 186 then
+            T[b[V]] = gethui
+        elseif opcode == 188 then
+            T[b[V]] = TweenInfo
+        elseif opcode == 190 then
+            T[q[V]] = syn
+        elseif opcode == 193 then
+            T[q[V]] = UDim2
+        elseif opcode == 195 then
+            T[p[V]] = loadstring
+        elseif opcode == 197 then
+            g = g[W]
+            u[L] = g
+        elseif opcode == 201 then
+            W = nil
+        elseif opcode == 209 then
+            K = q[V]
+            truncateRegistersAbove(T, K)
+            T[K] = T[K]()
+            truncateRegistersAbove(T, K)
+        elseif opcode == 211 then
+            g = T
+            W = q[V]
+        elseif opcode == 215 then
+            L = p[V]
+        elseif opcode == 217 then
+            L = nil
+        elseif opcode == 223 then
+            if T[q[V]] == k[V] then
+                V = p[V]
+            end
+        elseif opcode == 225 then
+            T[b[V]] = T[q[V]] // T[p[V]]
+        elseif opcode == 233 then
+            T[b[V]] = rawget
+        elseif opcode == 235 then
+            u = T
+            L = q[V]
+            g = k[V]
+        elseif opcode == 237 then
+            T[p[V]] = buffer
+        elseif opcode == 239 then
+            executeCallCleanup(...)
+        elseif opcode == 247 then
+            T[q[V]] = D.ua
+        elseif opcode == 249 then
+            T[p[V]] = identifyexecutor
+        elseif opcode == 251 then
+            T[q[V]] = UDim
+        elseif opcode == 255 then
+            T[b[V]][T[q[V]]] = J[V]
+        elseif opcode == 257 then
+            copyVarargRangeIntoRegisters(T, n, q[V])
+            truncateRegistersAbove(T, q[V])
+
+        else
+            -- Many additional operations are encoded through range/default branches
+            -- rather than a simple `opcode == constant` test. Those branches are
+            -- documented in dispatcher.md and remain candidates for further lifting.
+            executeRangeEncodedOperation(opcode, ...)
+        end
+    end
+end
+
+-- Key interpretation:
+-- T  = VM register table
+-- u  = table/register alias used by indexed stores
+-- S  = source/environment table
+-- p,q,b,k,v,J = instruction operand arrays
+-- L,W,g,K,F = transient VM registers / call-context state
+-- D  = VM environment/object containing helper functions
+--
+-- The important result is architectural: this is a bytecode interpreter.
+-- Recovering the original script requires decoding the instruction stream and
+-- constant records, not merely renaming generated helper functions.
